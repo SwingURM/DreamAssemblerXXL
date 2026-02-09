@@ -18,26 +18,27 @@ class ChangelogEntry:
             index = 0
 
         if "What's Changed" in changelog_str:  # type: ignore
-            while "##" not in lines[index]:
+            while index < len(lines) and "##" not in lines[index]:
                 index += 1
 
             index += 1  # skip the what's changed line
 
-            while lines[index].startswith("*"):
+            while index < len(lines) and lines[index].startswith("*"):
                 self.changelog_entries.append(lines[index].strip())
                 index += 1
 
         if "New Contributors" in changelog_str:  # type: ignore
-            while "New Contributors" not in lines[index]:
+            while index < len(lines) and "New Contributors" not in lines[index]:
                 index += 1
 
-            while lines[index].startswith("*"):
+            while index < len(lines) and lines[index].startswith("*"):
                 self.new_contributors.append(lines[index].strip())
                 index += 1
         if "Full Changelog" in changelog_str:  # type: ignore
-            while "Full Changelog" not in lines[index]:
+            while index < len(lines) and "Full Changelog" not in lines[index]:
                 index += 1
-            self.full_comparison_url = lines[index].strip()
+            if index < len(lines):
+                self.full_comparison_url = lines[index].strip()
 
 
 class ChangelogCollection:

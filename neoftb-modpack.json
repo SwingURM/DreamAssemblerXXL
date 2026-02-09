@@ -1,0 +1,25 @@
+{
+  "releases": [
+    "2.0.1",
+    "2.0.2",
+    "daily",
+    "experimental",
+    "previous_daily"
+  ],
+  "server_exclusions": [
+    ".gitattributes",
+    ".gitignore",
+    "README.md",
+    "servers.json"
+  ],
+  "client_exclusions": [
+    ".gitattributes",
+    ".gitignore",
+    "README.md",
+    "server-icon.png",
+    "server.properties",
+    "servers.json"
+  ],
+  "server_java8_exclusions": [],
+  "server_java9_exclusions": []
+}

@@ -320,8 +320,9 @@ class GenericAssembler:
         external_mods: List[Tuple[GTNHModInfo, GTNHVersion]] = self.external_mods(valid_sides)
 
         for mod, version in external_mods:
-            assert not mod.is_github()
-            lines.append(f"| [{mod.name}]({mod.external_url}) | {version.version_tag} |")
+            # external_mods can be curse, modrinth, or other sources - none of which are github
+            url = mod.external_url or mod.repo_url or ""
+            lines.append(f"| [{mod.name}]({url}) | {version.version_tag} |")
 
         return "\n".join(sorted(lines, key=lambda x: x.lower()))
 

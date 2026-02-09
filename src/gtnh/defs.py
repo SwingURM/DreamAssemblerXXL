@@ -45,8 +45,8 @@ class Archive(str, Enum):
     MODRINTH = "Modrinth"
 
 
-AVAILABLE_ASSETS_FILE = "gtnh-assets.json"
-GTNH_MODPACK_FILE = "gtnh-modpack.json"
+AVAILABLE_ASSETS_FILE = "neoftb-assets.json"
+GTNH_MODPACK_FILE = "neoftb-modpack.json"
 BLACKLISTED_REPOS_FILE = "repo-blacklist.json"
 LOCAL_EXCLUDES_FILE = ".inplace_mod_exclusions"
 INPLACE_PINNED_FILE = ".inplace_pinned_mods"

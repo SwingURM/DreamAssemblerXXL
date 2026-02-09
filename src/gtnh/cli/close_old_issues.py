@@ -42,7 +42,7 @@ async def close_old_issues() -> None:
 
 
 async def get_issue(num: int) -> AttributeDict:
-    async with httpx.AsyncClient(http2=True) as client:
+    async with httpx.AsyncClient(http2=True, trust_env=True) as client:
         gh = GitHubAPI(client, "DreamAssemblerXXL", oauth_token=get_github_token())
         log.debug(f"Getting issue {num}")
         return AttributeDict(

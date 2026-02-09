@@ -146,7 +146,26 @@ class TechnicAssembler(GenericAssembler):
         else:
             update_source = self.modpack_manager.get_removed_mods
 
-        last_release: GTNHRelease = self.modpack_manager.get_release(self.release.last_version)  # type: ignore
+        last_release: GTNHRelease | None = self.modpack_manager.get_release(self.release.last_version)  # type: ignore
+
+        # If last_release is None (e.g., first release or missing manifest), handle gracefully
+        if last_release is None:
+            if update_mode == DifferentialUpdateMode.NEW_MODS:
+                # For new mods mode, return all mods from current release as "new"
+                log.warn(
+                    f"Previous release not found for {self.release.version}. "
+                    f"Returning all mods as new for {update_mode.name}."
+                )
+                github_mods_all = self.github_mods(side.valid_mod_sides(), release=self.release)
+                external_mods_all = self.external_mods(side.valid_mod_sides(), release=self.release)
+                return github_mods_all + external_mods_all
+            else:
+                log.warn(
+                    f"Previous release not found for {self.release.version}. "
+                    f"Returning empty list for {update_mode.name}."
+                )
+                return []
+
         process_release: GTNHRelease = (
             last_release if update_mode == DifferentialUpdateMode.REMOVED_MODS else self.release
         )

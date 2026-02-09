@@ -91,6 +91,11 @@ def get_asset(release: AttributeDict, type: VersionableType) -> Tuple[AttributeD
     release_assets = [AttributeDict(a) for a in release.assets]
     found_main_asset = None
     extra_assets = []
+
+    # Special handling for UniMixins: prefer "all" variant over others
+    all_asset = None
+    non_all_assets = []
+
     for asset in release_assets:
         asset_name = asset.name
 
@@ -118,10 +123,22 @@ def get_asset(release: AttributeDict, type: VersionableType) -> Tuple[AttributeD
                 ]
             ):
                 continue
+
+            # Special handling for UniMixins: prefer "all" variant
+            if "unimixins" in asset_name.lower() and "-all-" in asset_name:
+                all_asset = asset
+                continue
+
+            non_all_assets.append(asset)
         elif type == VersionableType.config:
             if not asset_name.endswith(".zip"):
                 continue
+            non_all_assets.append(asset)
 
-        found_main_asset = asset
+    # Use "all" variant for UniMixins if found, otherwise use the last matching asset
+    if all_asset is not None:
+        found_main_asset = all_asset
+    elif non_all_assets:
+        found_main_asset = non_all_assets[-1]
 
     return found_main_asset, extra_assets

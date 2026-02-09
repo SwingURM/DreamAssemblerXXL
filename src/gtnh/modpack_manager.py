@@ -57,11 +57,40 @@ from gtnh.models.gtnh_version import GTNHVersion, version_from_release
 from gtnh.models.mod_info import GTNHModInfo
 from gtnh.models.mod_version_info import ModVersionInfo
 from gtnh.models.versionable import Versionable, version_is_newer, version_is_older, version_sort_key
-from gtnh.utils import AttributeDict, get_github_token, index
+from gtnh.utils import AttributeDict, get_curse_token, get_github_token, index
+
+try:
+    from curseforgepy import create_client
+except ImportError:
+    create_client = None
 
 log = get_logger(__name__)
 
 # Up Next - GT-New-Horizons-Modpack config/scripts handling
+
+
+def get_curseforge_download_url(project_no: str, file_no: str) -> str | None:
+    """
+    Get the download URL for a CurseForge mod file using project_no and file_no.
+    Returns the direct download URL or None if not found.
+    """
+    if create_client is None:
+        log.error("curseforgepy is not installed. Run: uv pip install curseforge-py")
+        return None
+
+    try:
+        token = get_curse_token()
+        if not token:
+            log.error(
+                f"{Fore.RED}CurseForge API token not found. Please set it in ~/.curse_token or CURSE_TOKEN environment variable.{Fore.RESET}"
+            )
+            return None
+        client = create_client(api_key=token)
+        download_url = client.get_file_download_url(mod_id=int(project_no), file_id=int(file_no))
+        return download_url
+    except Exception as e:
+        log.error(f"Failed to get CurseForge download URL for project {project_no}, file {file_no}: {e}")
+        return None
 
 
 class GTNHModpackManager:
@@ -87,6 +116,23 @@ class GTNHModpackManager:
             return AttributeDict(await self.gh.getitem(repo_uri(self.org, name)))
         except Exception:
             raise RepoNotFoundException(f"Repo not Found {name}")
+
+    async def get_external_repo(self, repo_url: str) -> AttributeDict | None:
+        """
+        Fetch a GitHub repo outside the GTNewHorizons organization.
+        :param repo_url: The full GitHub repository URL (e.g., https://github.com/author/repo)
+        :return: Repository data or None if not found
+        """
+        # Extract owner/repo from URL
+        parts = repo_url.rstrip('/').split('/')
+        if len(parts) >= 2:
+            owner = parts[-2]
+            repo = parts[-1]
+            try:
+                return AttributeDict(await self.gh.getitem(repo_uri(owner, repo)))
+            except Exception:
+                return None
+        return None
 
     def add_release(self, release: GTNHRelease, update: bool = False) -> bool:
         log.info(f"Adding Release `{Fore.GREEN}{release.version}{Fore.RESET}`")
@@ -130,14 +176,19 @@ class GTNHModpackManager:
 
         all_repos = await self.get_all_repos()
 
-        tasks = []
-        to_update_from_repos: list[Versionable] = [mod for mod in self.assets.mods if mod.source == ModSource.github]
+        # Include ALL GitHub source mods (both GTNH and external)
+        to_update_from_repos: list[Versionable] = [
+            mod for mod in self.assets.mods
+            if mod.source == ModSource.github
+        ]
+        # Add config (always has a repo)
         to_update_from_repos.append(self.assets.config)
 
         delta_progress: float = 100 / len(to_update_from_repos)
         if global_progress_callback is not None:
             global_progress_callback("Updating assets")
 
+        tasks = []
         for asset in to_update_from_repos:
             if assets_to_update and asset.name not in assets_to_update:
                 if progress_callback is not None:
@@ -146,14 +197,23 @@ class GTNHModpackManager:
                     )  # skipped mod is part of the process so we update the progress
                 continue
 
+            # Check if it's a GTNH repo first
             repo = all_repos.get(asset.name)
+
+            # UniMixins is a fork with no releases in GTNH org - use upstream repo instead
+            if asset.name == "UniMixins" and asset.source == ModSource.github and asset.repo_url:
+                repo = await self.get_external_repo(asset.repo_url)
+
+            # If not found in GTNH org, try external GitHub URL (only for mods, not config)
+            if not repo and hasattr(asset, 'source') and asset.source == ModSource.github and asset.repo_url:
+                repo = await self.get_external_repo(asset.repo_url)
 
             if progress_callback is not None:
                 progress_callback(delta_progress, f"updating {asset.name}")
 
             if not repo:
-                log.error(
-                    f"{Fore.RED}Missing repo for {Fore.CYAN}{asset.name}{Fore.RED}, skipping update check.{Fore.RESET}"
+                log.warn(
+                    f"{Fore.YELLOW}Skipping {Fore.CYAN}{asset.name}{Fore.YELLOW}: no GitHub repo found.{Fore.RESET}"
                 )
                 continue
             tasks.append(self.update_versionable_from_repo(asset, repo, releaseVersion))
@@ -301,30 +361,35 @@ class GTNHModpackManager:
         return True
 
     async def get_latest_github_release(self, repo: AttributeDict | str) -> AttributeDict | None:
+        # Determine owner: for external repos, use repo.owner.login; for GTNH repos (strings), use self.org
         if isinstance(repo, str):
-            try:
-                latest_release = AttributeDict(await self.gh.getitem(latest_release_uri(self.org, repo)))
-            except BadRequest:
-                log.error(f"{Fore.RED}No latest release found for {Fore.CYAN}{repo}{Style.RESET_ALL}")
-                latest_release = None
+            owner = self.org
+            repo_name = repo
         else:
-            try:
-                latest_release = AttributeDict(await self.gh.getitem(latest_release_uri(self.org, repo.name)))
-            except BadRequest:
-                log.error(f"{Fore.RED}No latest release found for {Fore.CYAN}{repo.get('name')}{Style.RESET_ALL}")
-                latest_release = None
+            # External repo - owner is stored in repo.owner.login
+            owner = repo.owner.login if hasattr(repo.owner, 'login') else repo.owner
+            repo_name = repo.name
+
+        try:
+            latest_release = AttributeDict(await self.gh.getitem(latest_release_uri(owner, repo_name)))
+        except BadRequest:
+            log.error(f"{Fore.RED}No latest release found for {Fore.CYAN}{repo_name}{Style.RESET_ALL}")
+            latest_release = None
 
         return latest_release
 
     async def update_versions_from_repo(
         self, asset: Versionable, repo: AttributeDict, for_translation: bool = False, releaseVersion: str | None = None
     ) -> bool:
+        # Determine owner: for external repos, use repo.owner.login; for internal repos, use self.org
+        owner = repo.owner.login if hasattr(repo.owner, 'login') else (repo.owner if isinstance(repo.owner, str) else self.org)
+
         # dont update mods with a side of NONE
         if isinstance(asset, GTNHModInfo):
             if asset.side == Side.NONE:
                 return False
 
-        releases = [AttributeDict(r) async for r in self.gh.getiter(repo_releases_uri(self.org, repo.name))]
+        releases = [AttributeDict(r) async for r in self.gh.getiter(repo_releases_uri(owner, repo.name))]
         if for_translation:
             releases = [r for r in releases if r.tag_name.endswith("-latest")]
 
@@ -917,7 +982,13 @@ class GTNHModpackManager:
 
         type = "Github" if is_github else "External"
         version = asset.get_version(asset_version)
-        if not version or not version.filename or not version.download_url:
+
+        # Check if this is a CurseForge mod that needs URL resolution
+        needs_curseforge_lookup = False
+        if version and version.filename and not version.download_url and version.curse_file:
+            needs_curseforge_lookup = True
+
+        if not version or not version.filename or (not version.download_url and not needs_curseforge_lookup):
             log.error(
                 f"{RED_CROSS} {Fore.RED}Version `{Fore.YELLOW}{asset_version}{Fore.RED}` not found for {type} Asset "
                 f"`{Fore.CYAN}{asset.name}{Fore.RED}`{Fore.RESET}"
@@ -928,12 +999,28 @@ class GTNHModpackManager:
 
         private_repo = f" {Fore.MAGENTA}<PRIVATE REPO>{Fore.RESET}" if asset.private else ""
 
+        # Resolve download URL for CurseForge mods
+        resolved_download_url = version.download_url
+        if needs_curseforge_lookup:
+            assert version.curse_file  # make mypy happy
+            log.debug(f"Resolving CurseForge download URL for {asset.name}:{asset_version}")
+            resolved_download_url = get_curseforge_download_url(
+                version.curse_file.project_no, version.curse_file.file_no
+            )
+            if not resolved_download_url:
+                log.error(
+                    f"{RED_CROSS} {Fore.RED}Failed to resolve CurseForge URL for {asset.name}:{asset_version}{Fore.RESET}"
+                )
+                if error_callback:
+                    error_callback(f"Failed to resolve CurseForge URL for {asset.name}:{asset_version}")
+                return None
+
         log.debug(
             f"Downloading {type} Asset `{Fore.CYAN}{asset.name}:{Fore.YELLOW}{asset_version}{Fore.RESET}` from "
-            f"{version.browser_download_url}{private_repo}"
+            f"{version.browser_download_url or resolved_download_url}{private_repo}"
         )
 
-        files_to_download = [(get_asset_version_cache_location(asset, version), version.download_url)]
+        files_to_download = [(get_asset_version_cache_location(asset, version), resolved_download_url)]
         for extra_asset in version.extra_assets:
             if extra_asset.download_url is not None:
                 files_to_download.append(
@@ -941,8 +1028,9 @@ class GTNHModpackManager:
                 )
 
         for mod_filename, download_url in files_to_download:
-            if os.path.exists(mod_filename) and not force_redownload:
-                log.debug(f"{Fore.YELLOW}Skipping re-redownload of {mod_filename}{Fore.RESET}")
+            # Skip if file exists AND is non-empty AND not forcing redownload
+            if os.path.exists(mod_filename) and mod_filename.stat().st_size > 0 and not force_redownload:
+                log.debug(f"{Fore.YELLOW}Skipping re-download of {mod_filename}{Fore.RESET}")
                 if download_callback:
                     download_callback(str(mod_filename.name))
                 continue
@@ -951,7 +1039,9 @@ class GTNHModpackManager:
             if is_github:
                 headers |= {"Authorization": f"token {get_github_token()}"}
 
-            async with self.client.stream(url=download_url, headers=headers, method="GET", follow_redirects=True) as r:
+            async with self.client.stream(
+                url=download_url, headers=headers, method="GET", follow_redirects=True, timeout=300.0
+            ) as r:
                 try:
                     r.raise_for_status()
                     with open(mod_filename, "wb") as f:

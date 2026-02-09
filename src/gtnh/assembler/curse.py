@@ -190,12 +190,12 @@ class CurseAssembler(GenericAssembler):
         """
         archive.write(self.overrides, arcname=self.overrides_folder / "overrides.png")
         archive.write(self.overrideslash, arcname=self.overrides_folder / "overrideslash.png")
-        coremod, coremod_version = [
-            (mod, version) for mod, version in self.get_mods(side) if mod.name == "NewHorizonsCoreMod"
-        ][0]
-        source_file: Path = get_asset_version_cache_location(coremod, coremod_version)
-        archive_path: Path = self.overrides_folder / "mods" / source_file.name
-        archive.write(source_file, arcname=archive_path)
+        # coremod, coremod_version = [
+        #     (mod, version) for mod, version in self.get_mods(side) if mod.name == "NewHorizonsCoreMod"
+        # ][0]
+        # source_file: Path = get_asset_version_cache_location(coremod, coremod_version)
+        # archive_path: Path = self.overrides_folder / "mods" / source_file.name
+        # archive.write(source_file, arcname=archive_path)
 
     def add_config(
         self, side: Side, config: Tuple[GTNHConfig, GTNHVersion], archive: ZipFile, verbose: bool = False
