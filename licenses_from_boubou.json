@@ -986,5 +986,297 @@
   "ZenScript": {
     "url": "https://github.com/GTNewHorizons/ZenScript",
     "license": "MIT"
+    },
+    "GTNHLib": {
+        "url": "https://github.com/GTNewHorizons/GTNHLib",
+        "license": "LGPL 3.0"
+    },
+    "ArchaicFix": {
+        "url": "https://github.com/embeddedt/ArchaicFix",
+        "license": "LGPL 3.0 (other)"
+    },
+    "Healer": {
+        "url": "https://github.com/Glease/Healer",
+        "license": "MIT License"
+    },
+    "AE2FluidCraft-Rework": {
+        "url": "https://github.com/GTNewHorizons/AE2FluidCraft-Rework",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "ASP + GS Patcher": {
+        "url": "",
+        "license": ""
+    },
+    "Advanced Solar Panel For 1.7.10 (Unofficial)": {
+        "url": "",
+        "license": ""
+    },
+    "AgriCraft": {
+        "url": "",
+        "license": ""
+    },
+    "Angelica": {
+        "url": "https://github.com/GTNewHorizons/Angelica",
+        "license": "LGPL 3.0"
+    },
+    "Another One Bites the Dust": {
+        "url": "",
+        "license": ""
+    },
+    "Baubles-Expanded": {
+        "url": "https://github.com/GTNewHorizons/Baubles-Expanded",
+        "license": "CC-BY-NC-SA-3.0"
+    },
+    "BetterP2P": {
+        "url": "https://github.com/GTNewHorizons/BetterP2P",
+        "license": "GNU General Public License v3.0"
+    },
+    "BiblioCraft": {
+        "url": "",
+        "license": ""
+    },
+    "BiblioCraft: BiblioWoods Biomes O'Plenty Edition": {
+        "url": "",
+        "license": ""
+    },
+    "BiblioCraft: BiblioWoods Forestry Edition": {
+        "url": "",
+        "license": ""
+    },
+    "BiblioCraft: BiblioWoods Natura Edition": {
+        "url": "",
+        "license": ""
+    },
+    "Big Reactors": {
+        "url": "",
+        "license": ""
+    },
+    "BiomeTweaker": {
+        "url": "",
+        "license": ""
+    },
+    "BrandonsCore": {
+        "url": "https://github.com/GTNewHorizons/BrandonsCore",
+        "license": "MIT License"
+    },
+    "CarpentersBlocks": {
+        "url": "https://github.com/GTNewHorizons/CarpentersBlocks",
+        "license": "GNU Lesser General Public License v2.1"
+    },
+    "ComputerCraft": {
+        "url": "",
+        "license": ""
+    },
+    "CoreTweaks": {
+        "url": "https://github.com/GTNewHorizons/CoreTweaks",
+        "license": "MIT License"
+    },
+    "Custom-Main-Menu": {
+        "url": "https://github.com/GTNewHorizons/Custom-Main-Menu",
+        "license": "MIT License"
+    },
+    "CustomThings": {
+        "url": "https://github.com/glowredman/CustomThings",
+        "license": "Mozilla Public License 2.0"
+    },
+    "Decocraft": {
+        "url": "",
+        "license": ""
+    },
+    "EnderTech": {
+        "url": "",
+        "license": ""
+    },
+    "Ex Astris": {
+        "url": "",
+        "license": ""
+    },
+    "Ex Compressum": {
+        "url": "https://github.com/glowredman/ExCompressum",
+        "license": "GPL 3.0"
+    },
+    "Ex Nihilo": {
+        "url": "https://github.com/LegacyModdingMC/ex-nihilo",
+        "license": "GPL 3.0"
+    },
+    "Extra Utilities": {
+        "url": "",
+        "license": ""
+    },
+    "FTB Islands": {
+        "url": "",
+        "license": ""
+    },
+    "FTB-Library": {
+        "url": "https://github.com/GTNH-Museum/FTB-Library",
+        "license": "MIT / LGPL-3.0"
+    },
+    "FTBTrophies": {
+        "url": "",
+        "license": ""
+    },
+    "ForgeRelocation": {
+        "url": "https://github.com/GTNewHorizons/ForgeRelocation",
+        "license": "All Rights Reserved"
+    },
+    "ForgeRelocationFMP": {
+        "url": "https://github.com/GTNewHorizons/ForgeRelocationFMP",
+        "license": "All Rights Reserved"
+    },
+    "Funky Locomotion": {
+        "url": "",
+        "license": ""
+    },
+    "Gravitation-Suite-old": {
+        "url": "",
+        "license": ""
+    },
+    "Hardcore Questing Mode [FORGE/FABRIC]": {
+        "url": "",
+        "license": ""
+    },
+    "Immersive Engineering": {
+        "url": "",
+        "license": ""
+    },
+    "Immersive Integration": {
+        "url": "",
+        "license": ""
+    },
+    "Industrial Craft": {
+        "url": "",
+        "license": ""
+    },
+    "InventoryBogoSorter": {
+        "url": "https://github.com/GTNewHorizons/InventoryBogoSorter",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "KleeSlabs": {
+        "url": "",
+        "license": ""
+    },
+    "Lockdown": {
+        "url": "",
+        "license": ""
+    },
+    "LogisticsPipes": {
+        "url": "https://github.com/GTNewHorizons/LogisticsPipes",
+        "license": "MMPL-1.0"
+    },
+    "McJtyLib": {
+        "url": "",
+        "license": ""
+    },
+    "Mercurius": {
+        "url": "",
+        "license": ""
+    },
+    "MineTogether Community": {
+        "url": "",
+        "license": ""
+    },
+    "Minefactory Reloaded": {
+        "url": "",
+        "license": ""
+    },
+    "ModularUI2": {
+        "url": "https://github.com/GTNewHorizons/ModularUI2",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "Morpheus": {
+        "url": "",
+        "license": ""
+    },
+    "MrTJPCore": {
+        "url": "https://github.com/GTNewHorizons/MrTJPCore",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "NotEnoughItems": {
+        "url": "https://github.com/GTNewHorizons/NotEnoughItems",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "OpenPeripheralAddons": {
+        "url": "",
+        "license": ""
+    },
+    "OpenPeripheralCore": {
+        "url": "",
+        "license": ""
+    },
+    "OpenPeripheralIntegration": {
+        "url": "",
+        "license": ""
+    },
+    "Pam's HarvestCraft": {
+        "url": "",
+        "license": ""
+    },
+    "RFTools": {
+        "url": "",
+        "license": ""
+    },
+    "ReSiever": {
+        "url": "https://github.com/glowredman/ReSiever",
+        "license": "GNU Lesser General Public License v2.1"
+    },
+    "Redstone Arsenal": {
+        "url": "",
+        "license": ""
+    },
+    "Salis-Arcana": {
+        "url": "https://github.com/GTNewHorizons/Salis-Arcana",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "Simply Jetpacks": {
+        "url": "",
+        "license": ""
+    },
+    "Solar Expansion": {
+        "url": "",
+        "license": ""
+    },
+    "TX-Loader": {
+        "url": "https://github.com/GTNewHorizons/TX-Loader",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "Thaumcraft": {
+        "url": "",
+        "license": ""
+    },
+    "Thaumcraft NEI Plugin": {
+        "url": "",
+        "license": ""
+    },
+    "Thermal Dynamics": {
+        "url": "",
+        "license": ""
+    },
+    "Thermal Expansion": {
+        "url": "",
+        "license": ""
+    },
+    "Thermal Foundation": {
+        "url": "",
+        "license": ""
+    },
+    "UniMixins": {
+        "url": "https://github.com/LegacyModdingMC/UniMixins",
+        "license": "unlicense?"
+    },
+    "WDMla": {
+        "url": "https://github.com/GTNewHorizons/WDMla",
+        "license": "Creative Commons Attribution-NonCommercial-ShareAlike 4.0 International Public License"
+    },
+    "YUNoMakeGoodMap": {
+        "url": "https://github.com/glowredman/YUNoMakeGoodMap",
+        "license": "Apache License 2.0"
+    },
+    "lwjgl3ify": {
+        "url": "https://github.com/GTNewHorizons/lwjgl3ify",
+        "license": "GNU Lesser General Public License v3.0"
+    },
+    "BuildCraftCompat": {
+        "url": "https://github.com/GTNewHorizons/BuildCraftCompat",
+        "license": "Minecraft Mod Public License v1.0.1 according to CurseForge (https://www.curseforge.com/minecraft/mc-mods/buildcraft-compat)."
   }
 }
